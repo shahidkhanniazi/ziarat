@@ -40,6 +40,18 @@ jobs:
 
       - run: flutter pub get
 
+      - name: Pre-install Android NDK (with retries)
+        run: |
+          NDK=$(grep -rhoE 'ndkVersion *= *"[^"]+"' android/app/build.gradle* | grep -oE '"[^"]+"' | tr -d '"' || true)
+          [ -z "$NDK" ] || [ "$NDK" = "flutter.ndkVersion" ] && NDK=28.2.13676358
+          echo "NDK=$NDK"
+          SDKM=$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager
+          for i in 1 2 3 4; do
+            yes | $SDKM --install "ndk;$NDK" > /dev/null && break
+            echo "retry $i"; rm -rf "$ANDROID_HOME/ndk/$NDK"; sleep 10
+          done
+          ls "$ANDROID_HOME/ndk/$NDK/source.properties"
+
       - name: Build APK (release if Privy IDs set, otherwise demo/debug)
         env:
           APP_ID: ${{ secrets.ZIARAT_PRIVY_APP_ID }}
