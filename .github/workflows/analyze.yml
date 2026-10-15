@@ -1,0 +1,25 @@
+name: Analyze
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable }
+      - run: flutter pub get
+      - name: Privy API dump
+        run: |
+          P=$(find ~/.pub-cache/hosted -maxdepth 2 -type d -name 'privy_flutter-*' | head -1)
+          echo "$P"
+          out=$(grep -rhnE '^\s*(abstract |sealed |final |base )*(class|mixin|extension|typedef) |^\s*(static |factory |Future|Stream|[A-Z][A-Za-z<>?,]* +get |void |bool |String|const |[A-Z][A-Za-z<>?]* +[a-z][A-Za-z]*\()' "$P/lib" | sed 's/^ *//' | cut -c1-160 | sort -u | head -400 | sed 's/%/%25/g' | awk '{printf "%s%%0A",$0}')
+          echo "::warning title=PrivyAPI::$out"
+          ex=$(cat "$P"/example/lib/*.dart 2>/dev/null | head -250 | sed 's/%/%25/g' | awk '{printf "%s%%0A",$0}')
+          echo "::warning title=PrivyExample::$ex"
+      - name: Analyze
+        run: |
+          out=$(flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | grep -E "error •" | head -80 | sed 's/%/%25/g' | awk '{printf "%s%%0A",$0}')
+          echo "::warning title=Analyze::$out"

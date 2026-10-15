@@ -4,7 +4,7 @@ class CurrencyWallet {
   final double balance;
 }
 const supportedWallets = <CurrencyWallet>[
-  CurrencyWallet(code:'USD',name:'US Dollar',symbol:'$',flag:'🇺🇸'),
+  CurrencyWallet(code:'USD',name:'US Dollar',symbol:r'$',flag:'🇺🇸'),
   CurrencyWallet(code:'EUR',name:'Euro',symbol:'€',flag:'🇪🇺'),
   CurrencyWallet(code:'GBP',name:'British Pound',symbol:'£',flag:'🇬🇧'),
   CurrencyWallet(code:'JPY',name:'Japanese Yen',symbol:'¥',flag:'🇯🇵'),

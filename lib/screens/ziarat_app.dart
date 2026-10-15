@@ -179,7 +179,7 @@ class _AssetSummary extends StatelessWidget {
 class AssetsPage extends StatelessWidget {
   const AssetsPage({super.key});
   @override
-  Widget build(BuildContext context) => DefaultTabController(length: 3, child: Scaffold(backgroundColor: bg, appBar: AppBar(title: const Text('Your assets', style: TextStyle(fontWeight: FontWeight.w800)), actions: [IconButton(onPressed: () => _notice(context, 'Add an asset after its provider and network are configured.'), icon: const Icon(Icons.add_rounded))], bottom: const TabBar(tabs: [Tab(text: 'All'), Tab(text: 'Fiat'), Tab(text: 'Crypto')], indicatorColor: emerald, labelColor: emerald, unselectedLabelColor: Colors.white54)), body: const TabBarView(children: [_AllAssets(), _FiatAssets(), CryptoWalletPage()]));
+  Widget build(BuildContext context) => DefaultTabController(length: 3, child: Scaffold(backgroundColor: bg, appBar: AppBar(title: const Text('Your assets', style: TextStyle(fontWeight: FontWeight.w800)), actions: [IconButton(onPressed: () => _notice(context, 'Add an asset after its provider and network are configured.'), icon: const Icon(Icons.add_rounded))], bottom: const TabBar(tabs: [Tab(text: 'All'), Tab(text: 'Fiat'), Tab(text: 'Crypto')], indicatorColor: emerald, labelColor: emerald, unselectedLabelColor: Colors.white54)), body: const TabBarView(children: [_AllAssets(), _FiatAssets(), CryptoWalletPage()])));
 }
 
 class _AllAssets extends StatelessWidget {
@@ -223,7 +223,7 @@ class _CryptoPreview extends StatelessWidget {
   const _CryptoPreview({required this.code, required this.name, required this.balance, required this.network});
   final String code, name, balance, network;
   @override
-  Widget build(BuildContext context) => Card(color: panel, elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: border)), child: ListTile(contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4), leading: CircleAvatar(backgroundColor: const Color(0xFF173C30), child: Text(code.substring(0, 1), style: const TextStyle(color: emerald, fontWeight: FontWeight.w900))), title: Text(name, style: const TextStyle(fontWeight: FontWeight.w800)), subtitle: Text('$code • $network', style: const TextStyle(color: Colors.white54, fontSize: 12)), trailing: Text(balance, style: const TextStyle(fontWeight: FontWeight.w800)));
+  Widget build(BuildContext context) => Card(color: panel, elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16), side: const BorderSide(color: border)), child: ListTile(contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4), leading: CircleAvatar(backgroundColor: const Color(0xFF173C30), child: Text(code.substring(0, 1), style: const TextStyle(color: emerald, fontWeight: FontWeight.w900))), title: Text(name, style: const TextStyle(fontWeight: FontWeight.w800)), subtitle: Text('$code • $network', style: const TextStyle(color: Colors.white54, fontSize: 12)), trailing: Text(balance, style: const TextStyle(fontWeight: FontWeight.w800))));
 }
 
 class _PortfolioHeader extends StatelessWidget {

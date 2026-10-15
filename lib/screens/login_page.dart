@@ -60,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     backgroundColor: bg,
     body: SafeArea(child: Center(child: SingleChildScrollView(padding: const EdgeInsets.all(22), child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 430), child: Column(children: [
       const SizedBox(height: 22),
-      Container(width: 82, height: 82, decoration: BoxDecoration(gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF135C42), Color(0xFF061A12)]), borderRadius: BorderRadius.circular(27), border: Border.all(color: const Color(0xFF27B985)), boxShadow: const [BoxShadow(color: Color(0x3327E0A0), blurRadius: 30, spreadRadius: 1)]), child: const Center(child: Text('Ż', style: TextStyle(color: emerald, fontSize: 48, fontWeight: FontWeight.w900))),
+      Container(width: 82, height: 82, decoration: BoxDecoration(gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Color(0xFF135C42), Color(0xFF061A12)]), borderRadius: BorderRadius.circular(27), border: Border.all(color: const Color(0xFF27B985)), boxShadow: const [BoxShadow(color: Color(0x3327E0A0), blurRadius: 30, spreadRadius: 1)]), child: const Center(child: Text('Ż', style: TextStyle(color: emerald, fontSize: 48, fontWeight: FontWeight.w900)))),
       const SizedBox(height: 18),
       const Text('ZIARAT', style: TextStyle(fontSize: 31, letterSpacing: 3.0, fontWeight: FontWeight.w900)),
       const SizedBox(height: 3),
