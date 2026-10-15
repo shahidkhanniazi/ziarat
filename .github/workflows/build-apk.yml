@@ -1,0 +1,64 @@
+# Ziarat APK build (GitHub Actions)
+# Repo > Settings > Secrets and variables > Actions mein ye secrets add karein:
+#   ZIARAT_PRIVY_APP_ID, ZIARAT_PRIVY_CLIENT_ID, ZIARAT_API_URL
+# Phir Actions tab > "Build APK" > Run workflow. APK "Artifacts" mein milegi.
+name: Build APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Generate android/ folder if missing
+        run: |
+          if [ ! -d android ]; then
+            flutter create --platforms=android --org com.ziarat --project-name ziarat .
+          fi
+
+      - name: Privy needs minSdk 27 + INTERNET permission in release
+        run: |
+          for f in android/app/build.gradle.kts android/app/build.gradle; do
+            [ -f "$f" ] && sed -i -E 's/minSdk(Version)?( =|) *flutter\.minSdkVersion/minSdk = 27/' "$f" || true
+          done
+          M=android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.INTERNET' "$M" || \
+            sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' "$M"
+
+      - run: flutter pub get
+
+      - name: Build APK (release if Privy IDs set, otherwise demo/debug)
+        env:
+          APP_ID: ${{ secrets.ZIARAT_PRIVY_APP_ID }}
+          CLIENT_ID: ${{ secrets.ZIARAT_PRIVY_CLIENT_ID }}
+          API_URL: ${{ secrets.ZIARAT_API_URL }}
+        run: |
+          if [ -n "$APP_ID" ] && [ -n "$CLIENT_ID" ]; then
+            flutter build apk --release \
+              --dart-define=ZIARAT_PRIVY_APP_ID="$APP_ID" \
+              --dart-define=ZIARAT_PRIVY_CLIENT_ID="$CLIENT_ID" \
+              --dart-define=ZIARAT_API_URL="$API_URL"
+            cp build/app/outputs/flutter-apk/app-release.apk ziarat.apk
+          else
+            echo "Privy IDs not set -> building DEMO (debug) APK without login"
+            flutter build apk --debug --dart-define=ZIARAT_API_URL="$API_URL"
+            cp build/app/outputs/flutter-apk/app-debug.apk ziarat.apk
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ziarat-apk
+          path: ziarat.apk

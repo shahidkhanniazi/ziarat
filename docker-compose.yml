@@ -1,0 +1,35 @@
+# Local/staging stack. Put real values in backend/.env and a POSTGRES_PASSWORD in your shell or a root .env file.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ziarat
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: ziarat
+    volumes:
+      - ziarat_pg:/var/lib/postgresql/data
+      - ./db/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro   # migrations run on first start only, in name order
+      - ./db/002_fee_engine.sql:/docker-entrypoint-initdb.d/002_fee_engine.sql:ro
+      - ./db/003_hardening.sql:/docker-entrypoint-initdb.d/003_hardening.sql:ro
+      - ./db/004_revenue.sql:/docker-entrypoint-initdb.d/004_revenue.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ziarat -d ziarat"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # No published port: only the API container can reach the database.
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    env_file: ./backend/.env
+    environment:
+      DATABASE_URL: postgres://ziarat:${POSTGRES_PASSWORD}@postgres:5432/ziarat
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+volumes:
+  ziarat_pg:
