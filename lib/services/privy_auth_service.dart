@@ -19,7 +19,7 @@ class PrivyAuthService {
     if (!configured) {
       throw StateError('Set ZIARAT_PRIVY_APP_ID and ZIARAT_PRIVY_CLIENT_ID.');
     }
-    return _privy ??= Privy(config: PrivyConfig(appId: appId, appClientId: clientId));
+    return _privy ??= Privy.init(config: PrivyConfig(appId: appId, appClientId: clientId));
   }
 
   /// Waits until the SDK has finished initialising (state leaves NotReady).
@@ -29,19 +29,17 @@ class PrivyAuthService {
   /// In 0.11 the token lives on the user and comes back as a Result.
   Future<String?> accessToken() async {
     if (!configured) return null;
-    final user = await privy.getUser();
+    await privy.getAuthState(); // waits until the SDK is ready
+    final user = privy.user;
     if (user == null) return null;
     final result = await user.getAccessToken();
-    return result.fold(
-      onSuccess: (token) => token,
-      onFailure: (_) => null,
-    );
+    return result is Success<String> ? result.value : null;
   }
 
   Future<String?> userId() async {
     if (!configured) return null;
-    final user = await privy.getUser();
-    return user?.id;
+    await privy.getAuthState();
+    return privy.user?.id;
   }
 
   Future<void> sendEmailCode(String email) async {

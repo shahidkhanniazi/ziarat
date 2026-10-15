@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
+import 'package:privy_flutter/privy_flutter.dart';
 import 'screens/ziarat_app.dart';
 import 'screens/login_page.dart';
 import 'services/privy_auth_service.dart';
