@@ -8,6 +8,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -101,3 +104,12 @@ jobs:
         with:
           name: ziarat-apk
           path: ziarat.apk
+
+      - name: Publish APK as a GitHub Release (easy mobile download)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Ziarat APK build ${{ github.run_number }}
+          files: ziarat.apk
+          body: |
+            Android APK. Demo/debug build if Privy IDs are not set in repo secrets.
