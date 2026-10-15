@@ -46,6 +46,13 @@ jobs:
           CLIENT_ID: ${{ secrets.ZIARAT_PRIVY_CLIENT_ID }}
           API_URL: ${{ secrets.ZIARAT_API_URL }}
         run: |
+          set -o pipefail
+          report() {
+            msg=$( { grep -n -E "error|Error|FAILURE|What went wrong|Exception" build.log | head -40; echo "----- tail -----"; tail -60 build.log; } | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=BuildLog::$msg"
+          }
+          trap 'report' ERR
+          exec > >(tee build.log) 2>&1
           if [ -n "$APP_ID" ] && [ -n "$CLIENT_ID" ]; then
             flutter build apk --release \
               --dart-define=ZIARAT_PRIVY_APP_ID="$APP_ID" \
