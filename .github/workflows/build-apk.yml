@@ -29,10 +29,10 @@ jobs:
             flutter create --platforms=android --org com.ziarat --project-name ziarat .
           fi
 
-      - name: Privy needs minSdk 27 + INTERNET permission in release
+      - name: Privy needs minSdk 28 + INTERNET permission in release
         run: |
           for f in android/app/build.gradle.kts android/app/build.gradle; do
-            [ -f "$f" ] && sed -i -E 's/minSdk(Version)?( =|) *flutter\.minSdkVersion/minSdk = 27/' "$f" || true
+            [ -f "$f" ] && sed -i -E 's/minSdk(Version)?( =|) *flutter\.minSdkVersion/minSdk = 28/' "$f" || true
           done
           M=android/app/src/main/AndroidManifest.xml
           grep -q 'android.permission.INTERNET' "$M" || \
