@@ -38,6 +38,26 @@ jobs:
           grep -q 'android.permission.INTERNET' "$M" || \
             sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' "$M"
 
+      - name: Force compileSdk 36 for plugins (privy_flutter ships with 34)
+        run: |
+          F=android/build.gradle.kts
+          if [ -f "$F" ] && ! grep -q 'ZIARAT_COMPILE_SDK_FIX' "$F"; then
+            cat >> "$F" <<'KTS'
+
+          // ZIARAT_COMPILE_SDK_FIX
+          subprojects {
+              val forceCompileSdk: Project.() -> Unit = {
+                  extensions.findByName("android")?.let { ext ->
+                      ext.javaClass.getMethod("compileSdkVersion", Int::class.javaPrimitiveType).invoke(ext, 36)
+                  }
+              }
+              if (state.executed) forceCompileSdk() else afterEvaluate { forceCompileSdk() }
+          }
+          KTS
+            sed -i 's/^          //' "$F"
+          fi
+          tail -15 "$F"
+
       - run: flutter pub get
 
       - name: Pre-install Android NDK (with retries)
